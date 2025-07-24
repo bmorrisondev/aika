@@ -1,50 +1,109 @@
-# Welcome to your Expo app 👋
+# Aika ⏳ - Time Tracking Made Simple
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Project Overview
 
-## Get started
+Aika is a cross-platform time tracking application built with Expo and React Native. The name "Aika" means "time" in Finnish, reflecting the app's focus on simple, efficient time management. Aika helps users track their work sessions with an intuitive timer interface and comprehensive history of previous time entries.
 
-1. Install dependencies
+Key features include:
+- Simple start/stop timer functionality
+- Task description for each time entry
+- History of previous time entries with duration calculation
+- User authentication and data persistence
+- Cross-platform support (iOS, Android, Web)
+
+## Clerk Authentication Integration
+
+This project showcases how to implement secure, modern authentication in a React Native app using Expo with [Clerk](https://clerk.dev). Clerk provides a complete authentication and user management solution that's easy to implement and highly customizable.
+
+In Aika, Clerk powers:
+- User sign-up and sign-in flows
+- Session management across devices
+- Secure access token handling for backend API calls
+- Integration with Supabase for authenticated database access
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 16+
+- pnpm (preferred package manager)
+- Expo CLI
+- Clerk account and API keys
+- Supabase account and API keys
+
+### Setup
+
+1. Clone the repository
 
    ```bash
-   npm install
+   git clone https://github.com/your-username/aika.git
+   cd aika
    ```
 
-2. Start the app
+2. Install dependencies
 
    ```bash
-   npx expo start
+   pnpm install
    ```
 
-In the output, you'll find options to open the app in a
+3. Create a `.env` file in the root directory with your Clerk and Supabase credentials
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```
+   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+4. Start the development server
 
-## Get a fresh project
+   ```bash
+   pnpm expo start
+   ```
 
-When you're ready, run:
+5. Open the app in your preferred environment:
+   - iOS simulator
+   - Android emulator
+   - Web browser
+   - Physical device with Expo Go app
 
-```bash
-npm run reset-project
-```
+## Technologies Used
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **Frontend**:
+  - [Expo](https://expo.dev) - React Native framework
+  - [React Native](https://reactnative.dev) - Cross-platform UI
+  - [Expo Router](https://docs.expo.dev/router/introduction) - File-based routing
+  - [TypeScript](https://www.typescriptlang.org) - Type safety
 
-## Learn more
+- **Authentication**:
+  - [Clerk](https://clerk.dev) - User authentication and session management
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Backend**:
+  - [Supabase](https://supabase.com) - PostgreSQL database and API
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Styling**:
+  - [React Native StyleSheet](https://reactnative.dev/docs/stylesheet) - Component styling
 
-## Join the community
+## Contribution Guidelines
 
-Join our community of developers creating universal apps.
+We welcome contributions to Aika! Here's how you can help:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Getting Started
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Style
+
+- Follow the existing TypeScript patterns
+- Use async/await for asynchronous operations
+
+### Issues
+
+Please use the GitHub issue tracker to report bugs or request features.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
