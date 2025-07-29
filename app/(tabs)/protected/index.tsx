@@ -324,11 +324,11 @@ const styles = StyleSheet.create({
   entriesTitle: {
     paddingHorizontal: 16
   },
-
   emptyText: {
     fontStyle: 'italic',
     color: '#888',
     marginTop: 8,
+    paddingHorizontal: 16
   },
   signOutButton: {
     backgroundColor: '#64748B',
