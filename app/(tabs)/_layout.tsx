@@ -16,6 +16,8 @@ export default function AppLayout() {
       {/* Protected routes */}
       <Stack.Protected guard={isSignedIn!}>
         <Stack.Screen name="protected" />
+        <Stack.Screen name="screens/create-organization" />
+        <Stack.Screen name="screens/add-organization-members" />
       </Stack.Protected>
     </Stack>
   );
