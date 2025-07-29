@@ -1,3 +1,4 @@
+import { useOrganization, useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Modal, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -12,6 +13,7 @@ interface TimeEntry {
   start_time: string;
   end_time: string | null;
   created_at: string;
+  created_by?: string;
 }
 
 interface TimeEntryItemProps {
@@ -70,11 +72,14 @@ function SlowSpinner() {
 }
 
 export function TimeEntryItem({ item, onUpdate, onDelete }: TimeEntryItemProps) {
+  const { user } = useUser();
+  const { organization } = useOrganization();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editedDescription, setEditedDescription] = useState(item.description);
   const [startDate, setStartDate] = useState(new Date(item.start_time));
   const [endDate, setEndDate] = useState(item.end_time ? new Date(item.end_time) : null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [creatorName, setCreatorName] = useState<string | null>(null);
   
   // Track the text inputs separately from the actual date objects
   const [startDateText, setStartDateText] = useState('');
@@ -122,6 +127,24 @@ export function TimeEntryItem({ item, onUpdate, onDelete }: TimeEntryItemProps) 
       setEndDateText(`${formatDate(endDate.toISOString())} ${formatTime(endDate)}`);
     }
   }, [startDate, endDate]);
+
+  // Get creator name if created_by is available
+  useEffect(() => {
+    if (item.created_by) {
+      // If the current user is the creator
+      if (user && user.id === item.created_by) {
+        setCreatorName('You');
+      } else {
+        organization?.getMemberships()
+          .then((memberships) => {
+            const member = memberships.data.find(m => m.publicUserData?.userId === item.created_by)
+            setCreatorName(`${member?.publicUserData?.firstName} ${member?.publicUserData?.lastName} (${member?.publicUserData?.identifier})` || 'Another team member');
+          })
+      }
+    } else {
+      setCreatorName(null);
+    }
+  }, [item.created_by, user]);
   
   // Calculate duration between start and end time
   const calculateDuration = (start: string, end: string | null) => {
@@ -234,7 +257,12 @@ export function TimeEntryItem({ item, onUpdate, onDelete }: TimeEntryItemProps) 
         activeOpacity={0.7}
       >
         <ThemedView style={styles.entryContent}>
-          <ThemedText type="defaultSemiBold" numberOfLines={1}>{item.description}</ThemedText>
+          <View style={styles.descriptionContainer}>
+            <ThemedText type="defaultSemiBold" numberOfLines={1}>{item.description}</ThemedText>
+            {organization && creatorName && (
+              <ThemedText style={styles.creatorText}>{creatorName}</ThemedText>
+            )}
+          </View>
           {item.end_time ? (
             <ThemedText style={styles.durationText}>
               {calculateDuration(item.start_time, item.end_time)}
@@ -501,5 +529,12 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     borderRadius: 8,
     overflow: 'hidden',
+  },
+  descriptionContainer: {
+    gap: 2,
+  },
+  creatorText: {
+    color: '#777',
+    fontSize: 12,
   },
 });

@@ -7,7 +7,7 @@ import { TimeEntryItem } from '@/components/TimeEntryItem';
 import { TimerCounter } from '@/components/TimerCounter';
 import { TimerInputForm } from '@/components/TimerInputForm';
 import { createSupabaseClerkClient } from '@/utils/supabase';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth, useOrganization, useUser } from '@clerk/clerk-expo';
 
 interface TimeEntry {
   id: string;
@@ -15,10 +15,12 @@ interface TimeEntry {
   start_time: string;
   end_time: string | null;
   created_at: string;
+  created_by: string;
 }
 
 export default function HomeScreen() {
   const { user } = useUser();
+  const { organization } = useOrganization();
   const { getToken } = useAuth();
   const [description, setDescription] = useState('');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -34,6 +36,9 @@ export default function HomeScreen() {
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const supabase = createSupabaseClerkClient(getToken());
+
+  const ownerId = organization?.id || user?.id;
+
   
   // Stop the timer counter
   const stopTimerCounter = () => {
@@ -95,7 +100,7 @@ export default function HomeScreen() {
       setTimeEntries(data || []);
       
       // Check if there's an active timer (entry without end_time)
-      const activeEntry = data?.find(entry => !entry.end_time);
+      const activeEntry = data?.find((entry: TimeEntry) => !entry.end_time && entry.created_by === user?.id);
       if (activeEntry) {
         setIsTimerRunning(true);
         setCurrentEntryId(activeEntry.id);
@@ -164,7 +169,7 @@ export default function HomeScreen() {
         .insert({
           description: description.trim(),
           start_time: startDate.toISOString(),
-          owner_id: user?.id,
+          owner_id: ownerId,
         })
         .select();
 
@@ -218,18 +223,27 @@ export default function HomeScreen() {
     }
   }, [isTimerRunning]);
 
-  // Fetch time entries when component mounts
+  // Fetch time entries when component mounts or user changes
   useEffect(() => {
     fetchTimeEntries();
 
-    // Clean up timer interval when component unmounts
+    // Set up periodic refresh every 30 seconds to detect changes from other users
+    const refreshInterval = setInterval(() => {
+      fetchTimeEntries();
+    }, 30000);
+
+    // Clean up interval on component unmount
     return () => {
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
       }
-    };
-  }, []);
+
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    }
+  }, [ownerId]);
 
   return (
     <ThemedView style={styles.container}>
