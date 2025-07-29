@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -17,31 +17,23 @@ interface TimeEntry {
   created_at: string;
 }
 
-
-
 export default function HomeScreen() {
-  // Clerk `useUser` hook to get the current user
   const { user } = useUser();
-  // Clerk `useAuth` hook to get the current user's access token
   const { getToken } = useAuth();
-  // Create a Supabase client using the Clerk access token
-  const supabase = createSupabaseClerkClient(getToken());
-
-  // Timer state
   const [description, setDescription] = useState('');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
   const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
   const [elapsedTime, setElapsedTime] = useState(0);
-  
   // We track the start time to calculate elapsed time
   const startTimeRef = useRef<Date | null>(null);
-  
   // Track the last time we updated the elapsed time
   const lastUpdateRef = useRef<number>(0);
   
   // Timer interval reference
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const supabase = createSupabaseClerkClient(getToken());
   
   // Stop the timer counter
   const stopTimerCounter = () => {
@@ -54,7 +46,7 @@ export default function HomeScreen() {
   };
   
   // Start the timer counter
-  const startTimerCounter = useCallback((initialStartTime?: Date) => {
+  const startTimerCounter = (initialStartTime?: Date) => {
     const start = initialStartTime || new Date();
     startTimeRef.current = start;
     lastUpdateRef.current = Date.now();
@@ -85,10 +77,10 @@ export default function HomeScreen() {
     }, 500); // Update more frequently for better accuracy
 
     timerIntervalRef.current = intervalId;
-  }, [elapsedTime]);
+  };
 
   // Function to fetch time entries from Supabase
-  const fetchTimeEntries = useCallback(async () => {
+  const fetchTimeEntries = async () => {
     try {
       const { data, error } = await supabase
         .from('time_entries')
@@ -116,9 +108,9 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Error fetching time entries:', error);
     }
-  }, [supabase, startTimerCounter]);
+  }
 
-  // Update a time entry
+  // Function to update a time entry
   const updateTimeEntry = async (id: string, updates: Partial<TimeEntry>) => {
     try {
       const { error } = await supabase
@@ -138,7 +130,7 @@ export default function HomeScreen() {
     }
   };
 
-  // Delete a time entry
+  // Function to delete a time entry
   const deleteTimeEntry = async (id: string) => {
     try {
       const { error } = await supabase
@@ -159,7 +151,7 @@ export default function HomeScreen() {
   };
 
   // Start a new timer
-  const startTimer = useCallback(async () => {
+  const startTimer = async () => {
     if (!description.trim()) {
       alert('Please enter what you are working on');
       return;
@@ -190,10 +182,10 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Error in startTimer:', error);
     }
-  }, [description, user, fetchTimeEntries, startTimerCounter, supabase]);
+  };
 
   // Stop the current timer
-  const stopTimer = useCallback(async () => {
+  const stopTimer = async () => {
     if (!currentEntryId) return;
 
     try {
@@ -215,7 +207,7 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('Error in stopTimer:', error);
     }
-  }, [currentEntryId, fetchTimeEntries, supabase]);
+  };
 
   // Update the elapsed time even when the app is in background
   useEffect(() => {
@@ -237,7 +229,7 @@ export default function HomeScreen() {
         timerIntervalRef.current = null;
       }
     };
-  }, [fetchTimeEntries]);
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
