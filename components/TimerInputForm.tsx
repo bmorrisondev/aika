@@ -1,26 +1,27 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-
-import { ThemedText } from './ThemedText';
-import { ThemedView } from './ThemedView';
+import { Ionicons } from '@expo/vector-icons'
+import { useState } from 'react'
+import { StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import { ThemedText } from './ThemedText'
+import { ThemedView } from './ThemedView'
 
 interface TimerInputFormProps {
-  description: string;
-  onDescriptionChange: (text: string) => void;
-  onStartTimer: () => void;
+  description: string
+  onDescriptionChange: (text: string) => void
+  onStartTimer: () => void
 }
 
-export function TimerInputForm({ 
-  description, 
-  onDescriptionChange, 
-  onStartTimer 
+export function TimerInputForm({
+  description,
+  onDescriptionChange,
+  onStartTimer,
 }: TimerInputFormProps) {
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false)
 
   return (
     <ThemedView style={styles.formContent}>
-      <ThemedText type="defaultSemiBold" style={styles.formLabel}>What are you working on?</ThemedText>
+      <ThemedText type="defaultSemiBold" style={styles.formLabel}>
+        What are you working on?
+      </ThemedText>
       <ThemedView style={styles.inputContainer}>
         <TextInput
           style={[styles.input, isInputFocused && styles.inputFocused]}
@@ -33,17 +34,14 @@ export function TimerInputForm({
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
         />
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={onStartTimer}
-        >
+        <TouchableOpacity style={styles.button} onPress={onStartTimer}>
           <ThemedView style={styles.buttonContent}>
             <Ionicons name="play" size={24} color="#fff" />
           </ThemedView>
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   input: {
     height: 48,
@@ -96,4 +94,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 8,
   },
-});
+})
